@@ -1,0 +1,191 @@
+from tkinter import *
+import time
+import sys
+
+master = Tk()
+
+
+mult = 1
+click = 0
+autoclickers = 0
+touches = 0
+
+
+def auto_click():
+    global click
+    global autoclickers
+    click += autoclickers
+    master.after(1000, auto_click)
+
+
+auto_click()
+
+statusLabel = Label(text="STATUS", background="red", width=10, height=3)
+statusLabel.pack()
+currentStatusEntry = Entry(background="orange", width=100, justify='center')
+currentStatusEntry.pack()
+
+clicksLabel = Label(text="Your clicks!!!", background="yellow",
+                    width=10, height=3)
+clicksLabel.pack()
+currentClicksEntry = Entry(background="green", width=10, justify='center')
+currentClicksEntry.pack()
+
+
+def process_print(string_to_insert):
+    currentProcessEntry.delete(0, END)
+    currentProcessEntry.insert(0, string_to_insert)
+
+
+def show_click():
+    global click
+    currentClicksEntry.delete(0, END)
+    currentClicksEntry.insert(0, str(click))
+    master.after(1, show_click)
+
+
+show_click()
+
+firstLevel = False
+secondLevel = False
+thirdLevel = False
+fourthLevel = False
+
+
+def refresh_status():
+    global click
+    global autoclickers
+    global mult
+    global firstLevel
+    global secondLevel
+    global thirdLevel
+    global fourthLevel
+    if click < 100:
+        currentStatusEntry.delete(0, END)
+        currentStatusEntry.insert(0, 'Come on! You\'ll get this!!')
+    elif click >= 100 and not firstLevel:
+        currentStatusEntry.delete(0, END)
+        currentStatusEntry.insert(0, 'Achievement Unlocked: '
+                                     'Junior Clicker! BONUS 100 clicks!')
+        click += 100
+        firstLevel = True
+
+    elif click >= 400 and not secondLevel:
+        currentStatusEntry.delete(0, END)
+        currentStatusEntry.insert(0, 'Achievement Unlocked: '
+                                     'Non-beginner clicker! '
+                                     'BONUS Autoclicker doubled!')
+        autoclickers *= 2
+        secondLevel = True
+
+    elif click >= 1000 and not thirdLevel:
+        currentStatusEntry.delete(0, END)
+        currentStatusEntry.insert(0, 'Achievement Unlocked: '
+                                     'Python style! QUAD CLICKS!!!')
+        thirdLevel = True
+        mult *= 4
+
+    elif click >= 3000 and not fourthLevel:
+        currentStatusEntry.delete(0, END)
+        currentStatusEntry.insert(0, 'Achievement Unlocked: '
+                                     'You are senior developer! Good Job!!!')
+        mult = 8
+        fourthLevel = True
+    master.after(50, refresh_status)
+
+
+refresh_status()
+
+
+processLabel = Label(background="deep sky blue", text="Process",
+                     width=10, height=2)
+processLabel.pack()
+currentProcessEntry = Entry(background="RoyalBlue1",
+                            width=100, justify='center')
+currentProcessEntry.pack()
+
+
+double_click_activated = False
+
+
+def purchase_double_clicks():
+    global click
+    global mult
+    global double_click_activated
+    if click < 50:
+        process_print("Not enough clicks!")
+    else:
+        if double_click_activated:
+            process_print("You have already used it!")
+        else:
+            double_click_activated = True
+            mult *= 2
+            process_print("Double Clicks Purchased!")
+
+
+purchaseDoubleClickButton = Button(master, background="violet",
+                                   text="Purchase Double Clicks",
+                                   command=purchase_double_clicks)
+purchaseDoubleClickButton.pack()
+
+auto_click_activated = False
+
+
+def purchase_auto_clicker():
+    global click
+    global autoclickers
+    global auto_click_activated
+    if click < 120:
+        process_print("Not enough clicks!")
+    else:
+        if auto_click_activated:
+            process_print("You have already used it!")
+        else:
+            auto_click_activated = True
+            process_print("Auto clicker purchased!")
+            autoclickers += 1
+
+
+purchaseAutoClickerButton = Button(master, background="purple",
+                                   text="Purchase Auto Clicker",
+                                   command=purchase_auto_clicker)
+purchaseAutoClickerButton.pack()
+
+
+def show_info():
+    process_print("Double click purchases need 50 clicks!  "
+                  "Auto clicker purchases need 120 clicks!")
+
+
+purchaseInfoButton = Button(master, text="Tell me about bonuses",
+                            command=show_info)
+purchaseInfoButton.pack()
+
+
+def button_command():
+    global click
+    global touches
+    global mult
+    touches += 1
+    click += mult
+    process_print("Wow! You have already "
+                  "pressed for {} times!!!".format(touches))
+
+
+mainClickButton = Button(master, text="Click!", width=50, height=30,
+                         command=button_command)
+mainClickButton.pack()
+
+
+def finish_game():
+    process_print("You have already finished it!!")
+    sys.exit()
+
+
+finish_button = Button(master, text="It's time to stop", command=finish_game)
+finish_button.pack()
+
+master.title("Clicker! v0.0.4")
+master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(),
+                                     master.winfo_screenheight()))
+mainloop()
