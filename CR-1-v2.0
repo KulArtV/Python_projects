@@ -147,7 +147,7 @@ def show_info():
     global mult
     global autoclickers
     global current_level
-    process_print("Double click purchases need {} clicks!  "
+    process_print("Double click purchases need {} clicks! "
                   "Auto clicker purchases need {} clicks!"
                   .format(50*((mult - current_level//2)**2),
                           120*((autoclickers + 1 - current_level//2)**2)))
