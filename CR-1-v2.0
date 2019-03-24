@@ -1,0 +1,187 @@
+from tkinter import *
+import time
+import sys
+
+master = Tk()
+
+
+mult = 1
+click = 0
+autoclickers = 0
+touches = 0
+current_level = 0
+
+
+def auto_click():
+    global click
+    global autoclickers
+    click += autoclickers
+    master.after(1000, auto_click)
+
+
+auto_click()
+
+statusLabel = Label(text="STATUS", background="red", width=10, height=3)
+statusLabel.pack()
+currentStatusEntry = Entry(background="orange", width=100, justify='center')
+currentStatusEntry.pack()
+
+clicksLabel = Label(text="Your clicks!!!", background="yellow",
+                    width=10, height=3)
+clicksLabel.pack()
+currentClicksEntry = Entry(background="green", width=10, justify='center')
+currentClicksEntry.pack()
+
+
+def process_print(string_to_insert):
+    currentProcessEntry.delete(0, END)
+    currentProcessEntry.insert(0, string_to_insert)
+
+
+def show_click():
+    global click
+    currentClicksEntry.delete(0, END)
+    currentClicksEntry.insert(0, str(click))
+    master.after(1, show_click)
+
+
+show_click()
+
+levels_number = 6
+levels_namings = ['Junior Clicker!', 'Non-beginner clicker!',
+                  'Python style!', 'You are senior developer! Good Job!!!',
+                  'You are Machine!!!',
+                  'Stop him! He\'ll make a hole in press button!!!']
+
+levels_completed = [False for i in range(levels_number + 1)]
+next_level_ok = [False for i in range(levels_number)]
+levels_requirements = [100 * ((i*2 + 1)**2) for i in range(levels_number)]
+levels_congratulations = ['Level number {}!! '.format(i + 1)
+                          + 'Achievement unlocked:'
+                          + levels_namings[i]
+                          + ' Autoclickers doubled!' * (i % 2)
+                          + ' Clicks per press doubled' * ((i+1) % 2)
+                          for i in range(levels_number)]
+
+
+def level_up():
+    global current_level
+    global levels_completed
+    global levels_congratulations
+    levels_completed[current_level] = True
+    currentStatusEntry.delete(0, END)
+    currentStatusEntry.insert(0, levels_congratulations[current_level])
+
+
+def refresh_status():
+    global click
+    global autoclickers
+    global mult
+    global current_level
+    global levels_requirements
+    global levels_completed
+    global next_level_ok
+    global levels_number
+    next_level_ok[current_level] = (click >= levels_requirements[current_level]
+                                    and not levels_completed[current_level])
+    i = current_level
+    while i < levels_number:
+        if next_level_ok[i]:
+            print(current_level)
+            level_up()
+            current_level = i + 1
+            if current_level % 2 == 0:
+                autoclickers *= 2
+            else:
+                mult *= 2
+        i += 1
+    master.after(50, refresh_status)
+
+
+refresh_status()
+
+
+processLabel = Label(background="deep sky blue", text="Process",
+                     width=10, height=2)
+processLabel.pack()
+currentProcessEntry = Entry(background="RoyalBlue1",
+                            width=100, justify='center')
+currentProcessEntry.pack()
+
+
+def purchase_double_clicks():
+    global click
+    global mult
+    if click < 50*((mult - (current_level+1)//2)**2):
+        process_print("Not enough clicks!")
+    else:
+        click -= 50*((mult - (current_level+1)//2)**2)
+        mult += 1
+        process_print("Plus Click Purchased!")
+
+
+purchaseDoubleClickButton = Button(master, background="violet",
+                                   text="Purchase Plus Click",
+                                   command=purchase_double_clicks)
+purchaseDoubleClickButton.pack()
+
+
+def purchase_auto_clicker():
+    global click
+    global autoclickers
+    if click < 120*((autoclickers + 1 - (current_level+1)//2)**2):
+        process_print("Not enough clicks!")
+    else:
+        process_print("Auto clicker purchased!")
+        click -= 120*((autoclickers + 1 - (current_level+1)//2)**2)
+        autoclickers += 1
+
+
+purchaseAutoClickerButton = Button(master, background="purple",
+                                   text="Purchase Auto Clicker",
+                                   command=purchase_auto_clicker)
+purchaseAutoClickerButton.pack()
+
+
+def show_info():
+    global mult
+    global autoclickers
+    global current_level
+    process_print("Double click purchases need {} clicks!  "
+                  "Auto clicker purchases need {} clicks!"
+                  .format(50*((mult - current_level//2)**2),
+                          120*((autoclickers + 1 - current_level//2)**2)))
+
+
+purchaseInfoButton = Button(master, text="Tell me about bonuses",
+                            command=show_info)
+purchaseInfoButton.pack()
+
+
+def button_command():
+    global click
+    global touches
+    global mult
+    touches += 1
+    click += mult
+    process_print("Wow! You have already "
+                  "pressed for {} times!!!".format(touches))
+
+
+mainClickButton = Button(master, text="Click!", width=50, height=30,
+                         command=button_command)
+mainClickButton.pack()
+
+
+def finish_game():
+    process_print("You have already finished it!!")
+    sys.exit()
+
+
+finish_button = Button(master, text="It's time to stop", command=finish_game)
+finish_button.pack()
+
+master.title("Clicker! v0.0.4")
+master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(),
+                                     master.winfo_screenheight()))
+mainloop()
