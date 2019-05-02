@@ -1,1 +1,8 @@
-Here you can find some programs from Artur Kulapin
+Here you can find telegram bot @kulartbot
+It can keep your deadlines; you can insert some tasks into it and get them from him.
+May be in some updates eystem will be able to:
+1. Remove some tasks by user
+2. Bot will remove some tasks, if it's finish time wasted
+3. Let user change some parameters of tasks
+
+Good chating with bot! :)
